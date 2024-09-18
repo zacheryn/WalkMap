@@ -1,0 +1,19 @@
+#!/bin/bash
+# run
+
+# Stop on errors
+# See https://vaneyckt.io/posts/safer_bash_scripts_with_set_euxo_pipefail/
+set -Eeuo pipefail
+set +x
+
+FILE=var/database.sqlite3
+if [ ! -f "$FILE" ]; then
+    echo "Error: can't find database $FILE"
+    echo "Try: ./bin/db create"
+    exit 1
+fi
+
+set -x
+
+npx webpack &
+flask --app MDE --debug run --host 0.0.0.0 --port 8000

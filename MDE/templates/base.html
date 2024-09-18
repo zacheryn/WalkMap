@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>EECS 497 MDE Team 9</title>
+    <link rel="stylesheet" type="text/css" href="/static/css/style.css">
+    <meta name="description" content="Interactive map to determine walkability of an area based on user reviews">
+</head>
+<body>
+    <header>
+        <div class="header">
+            <div class="top-left" style="float:left">
+                <a href="/">Logo</a>
+            </div>
+            <div class="top-right" style="float:right">
+                <a href="/users/{{ logname }}/">{{ logname }}</a>
+            </div>
+        </div>
+    </header>
+    <main>
+        {% block main %}{% endblock %}
+    </main>
+</body>
+</html>

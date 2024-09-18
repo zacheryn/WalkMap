@@ -1,0 +1,15 @@
+#!/bin/bash
+# test
+
+# Stop on errors
+# See https://vaneyckt.io/posts/safer_bash_scripts_with_set_euxo_pipefail/
+set -Eeuo pipefail
+set -x
+
+npx eslint --ext jsx MDE/js/
+npx prettier --check MDE/js
+pycodestyle MDE
+pydocstyle MDE
+pylint MDE
+
+pytest -v tests

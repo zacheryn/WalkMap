@@ -1,0 +1,29 @@
+# Website related stuff
+*.pem
+*.db
+var/
+node_modules/
+cookies.txt
+session.json
+bundle.js
+*.js.map
+
+# Python stuff
+*.pyc
+__pycache__/
+*.egg-info*
+dist/
+env/
+venv/
+venv3/
+.venv/
+.pytest_cache
+
+# IDE dirs
+*~
+*.lock
+*.swp
+.vscode
+.ropeproject/
+.vscode/
+.idea

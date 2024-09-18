@@ -1,0 +1,20 @@
+#!/bin/bash
+# install
+
+# Stop on errors
+# See https://vaneyckt.io/posts/safer_bash_scripts_with_set_euxo_pipefail/
+set -Eeuo pipefail
+set -x
+
+# Create python virtual enviroment
+python3 -m venv env
+
+# Activate python virtual enviroment
+source env/bin/activate
+
+# Install back end
+pip install -r requirements.txt
+pip install -e .
+
+npm ci .
+npm audit fix
