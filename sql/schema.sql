@@ -15,7 +15,10 @@ CREATE TABLE Locations(
     country_name VARCHAR(100) NOT NULL,
     state_name VARCHAR(100) NOT NULL,
     city_name VARCHAR(100) NOT NULL,
-    [address] VARCHAR(100)
+    [address] VARCHAR(100),
+    longitude REAL NOT NULL,
+    latitude REAL NOT NULL,
+    UNIQUE(longitude, latitude)
 );
 
 CREATE TABLE Reviews(
@@ -38,7 +41,7 @@ CREATE TABLE OwnsReview(
     FOREIGN KEY(review_id) REFERENCES Reviews(review_id) ON DELETE CASCADE
 );
 
-CREATE TABLE ReviewLoc(
+CREATE TABLE ReviewLocation(
     location_id INTEGER NOT NULL,
     review_id INTEGER NOT NULL,
     PRIMARY KEY(location_id, review_id),
