@@ -6,7 +6,7 @@ CREATE TABLE Users(
     first_name VARCHAR(20),
     last_name VARCHAR(20),
     email VARCHAR(40) NOT NULL,
-    [filename] VARCHAR(64) NOT NULL DEFAULT "defaultProPic.png",
+    [filename] VARCHAR(64) NOT NULL DEFAULT "default.png",
     [password] VARCHAR(256) NOT NULL
 );
 
@@ -16,6 +16,7 @@ CREATE TABLE Locations(
     state_name VARCHAR(100) NOT NULL,
     city_name VARCHAR(100) NOT NULL,
     [address] VARCHAR(100),
+    building_name VARCHAR(200),
     longitude REAL NOT NULL,
     latitude REAL NOT NULL,
     UNIQUE(longitude, latitude)
@@ -28,8 +29,8 @@ CREATE TABLE Reviews(
     sidewalk_quality INTEGER,
     slope INTEGER,
     road_dist INTEGER,
-    sidewalk INTEGER CHECK(sidewalk IN (0, 1)),
-    public_trans INTEGER CHECK(public_trans IN (0, 1)),
+    sidewalk BOOLEAN,
+    public_trans BOOLEAN,
     created DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
