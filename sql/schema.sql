@@ -2,7 +2,7 @@ PRAGMA foreign_keys = ON;
 
 CREATE TABLE Users(
     user_id INTEGER PRIMARY KEY AUTOINCREMENT,
-    username VARCHAR(40) NOT NULL,
+    username VARCHAR(40) NOT NULL UNIQUE,
     first_name VARCHAR(20),
     last_name VARCHAR(20),
     email VARCHAR(40) NOT NULL,
