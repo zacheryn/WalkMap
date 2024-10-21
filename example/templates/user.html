@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+
+{% block main %}
+        <div class="profile"> 
+            <div class="username"> 
+                <h1>{{ username }}</h1>
+            </div>
+            <div>
+                {% if logname == username %}
+                    <a href="/accounts/edit/">
+                        <h4>Edit profile</h4>
+                    </a>
+                    <!-- DO NOT CHANGE THIS (aside from where we say 'FIXME') -->
+                    <form action="/accounts/logout/" method="post" enctype="multipart/form-data">
+                        <input type="submit" name="logout" value="Logout"/>
+                    </form>
+                {% else %}
+                     {% if username in following %}
+                        <span>following</span>
+                        <!-- DO NOT CHANGE THIS (aside from where we say 'FIXME') -->
+                        <form action="/following?target=/users/{{ username }}/" method="post" enctype="multipart/form-data">
+                            <input type="submit" name="unfollow" value="unfollow"/>
+                            <input type="hidden" name="username" value="{{ username }}"/>
+                            <input type="hidden" name="operation" value="unfollow"/>
+                        </form>
+                     {% else %}     
+                        <span>not following</span>
+                        <!-- DO NOT CHANGE THIS (aside from where we say 'FIXME') -->
+                        <form action="/following?target=/users/{{ username }}/" method="post" enctype="multipart/form-data">
+                            <input type="submit" name="follow" value="follow"/>
+                            <input type="hidden" name="username" value="{{ username }}"/>
+                            <input type="hidden" name="operation" value="follow"/>
+                        </form>  
+                    {% endif %} 
+                {% endif %}
+            </div>
+            <div class="relationship"> 
+                <span> {{ total_posts }} {{ 'post' if total_posts == 1 else 'posts' }} </span>            
+                <a href="/users/{{ username }}/followers/">
+                    {{ total_followers }} {{ 'follower' if total_followers == 1 else 'followers' }}
+                </a>
+                <a href="/users/{{ username }}/following/">
+                    {{ total_following }} following
+                </a>  
+            </div>
+            <div class="name"> 
+                <span>{{ fullname }}</span>            
+            </div>
+            <div class="new_post"> 
+                {% if logname == username %}
+                    <!-- DO NOT CHANGE THIS (aside from where we say 'FIXME') -->
+                    <form action="/posts?target=/users/{{ logname }}/" method="post" enctype="multipart/form-data">
+                        <input type="file" name="file" accept="image/*" required/>
+                        <input type="submit" name="create_post" value="upload new post"/>
+                        <input type="hidden" name="operation" value="create"/>
+                    </form>
+                {% endif %}
+            </div>
+
+            {% if total_posts <= 0 %}
+                <span>No posts yet.</span>
+            {% else %}
+                {% for post in posts %}
+                    <a href="/posts/{{ post.postid }}/">
+                        <img src="/uploads/{{ post.filename }}" class = "profile-post" alt = "post {{ post.postid }}">
+                    </a>
+                {% endfor %}
+            {% endif %}
+        </div>
+{% endblock %}
+
+
+
+
+        
+
