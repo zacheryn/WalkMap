@@ -21,7 +21,7 @@ def search_location():
     # If no query parameters provided, fetch a random location
     if len(flask.request.args) == 0:
         cur = connection.execute(
-            "select * from Locations " +
+            "select * from Locations "
             "order by random() limit 1"
         )
     else:
