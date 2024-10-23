@@ -32,9 +32,12 @@ def search_location():
     )
     
     review_ids = cur.fetchall()
+    ids = []
+    for review_id in review_ids:
+    	ids.append(review_id['review_id']
     
     #create a parameterized query for the in clause
-    parameters = ', '.join('?' for _ in review_ids)
+    parameters = ', '.join('?' for _ in ids)
 
     #fetch reviews by review id
     cur = connection.execute(
@@ -43,12 +46,10 @@ def search_location():
         "JOIN OwnsReview ORV ON ORV.review_id = R.review_id"
         "JOIN Users U ON U.user_id = ORV.user_id"
         "WHERE review_id in ({parameters})",
-        (review_ids)
+        (ids)
     )
     
     reviews = cur.fetchall()
-    
-    owners_and_reviews = cur.fetchall()
 
     context = {
         "reviews" : reviews
