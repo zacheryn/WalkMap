@@ -30,9 +30,11 @@
     "eslint-plugin-jsx-a11y": ">=6.7.1",
     "eslint-plugin-react": ">=7.33.2",
     "eslint-plugin-react-hooks": ">=4.6.0",
+    "file-loader": "^6.2.0",
     "prettier": "^3.0.3",
     "start-server-and-test": "^2.0.1",
     "tmp": "^0.2.1",
+    "url-loader": "^4.1.1",
     "webpack": ">=5.88.2",
     "webpack-cli": ">=5.1.4"
   },

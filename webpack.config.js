@@ -34,6 +34,18 @@ module.exports = {
         use: "ts-loader",
         exclude: /node_modules/,
       },
+      {
+        // Support image loading
+        test: /\.(png|jpg|gif)$/i,
+        use: [
+          {
+            loader: 'url-loader',
+            options: {
+              limit: 8192,
+            },
+          },
+        ],
+      },
     ],
   },
   resolve: {

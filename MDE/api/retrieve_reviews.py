@@ -1,71 +1,90 @@
+"""Contains the retrieve_reviews API function."""
 import json
 import flask
 import MDE
 
-@MDE.app.route('/api/review/list/')
-def search_location():
+@MDE.app.route('/api/review/list/', methods=['GET'])
+def retrieve_reviews():
+    """Return reviews for location with the given id."""
 
     error_response = {
         "message": "Bad Request",
         "status_code": 400
     }
-    
-    
-    #connect to the database
+
+    # Connect to the database
     connection = MDE.model.get_db()
 
-    #return 400 bad request error if location id not provided...not sure how to check if malformed
+    # Return 400 bad request error if location id not provided...not sure how to check if malformed
     if 'locationid' not in flask.request.args:
         return flask.make_response(flask.jsonify(**error_response), 400)
-    
-    #get location id
+
+    # Get location id
     id = flask.request.args['locationid']
 
-    #fetch review ids by location id
+    # Fetch reviews and relevant information
     cur = connection.execute(
-        "SELECT review_id"
-        "FROM ReviewLocation"
-        "WHERE location_id=id"
-    )
-    review_ids = cur.fetchall()
-
-    #fetch reviews by review id
-    cur = connection.execute(
-        "SELECT review_id, content, overall, sidewalk_quality, slope, road_dist, sidewalk, public_trans "
-        "FROM Reviews"
-        "WHERE review_id in review_ids"
+        "SELECT Reviews.review_id, Reviews.content, Reviews.overall, "
+        "Reviews.sidewalk_quality, Reviews.slope, Reviews.road_dist, "
+        "Reviews.sidewalk, Reviews.public_trans, Users.username, Users.filename "
+        "FROM ReviewLocation "
+        "INNER JOIN Reviews "
+        "ON ReviewLocation.review_id = Reviews.review_id "
+        "INNER JOIN OwnsReview "
+        "ON ReviewLocation.review_id = OwnsReview.review_id "
+        "INNER JOIN Users "
+        "ON OwnsReview.user_id = Users.user_id "
+        "WHERE ReviewLocation.location_id = ?",
+        (id, )
     )
     reviews = cur.fetchall()
 
-    #also fetch owners...
-    cur = connection.execute(
-        "SELECT *"
-        "FROM OwnsReview"
-        "WHERE review_id in review_ids"
-    )
-    owners_and_reviews = cur.fetchall()
+    # Get Averages
+    overall_tot = 0.0
+    quality_tot = 0.0
+    slope_tot = 0.0
+    dist_tot = 0.0
+    count = 0
+    quality_count = 0
+    slope_count = 0
+    dist_count = 0
+    for review in reviews:
+        overall_tot += review["overall"]
+        count += 1
+        if review.get("sidewalk_quality") is not None:
+            quality_tot += review["sidewalk_quality"]
+            quality_count += 1
+        if review.get("slope") is not None:
+            slope_tot += review["slope"]
+            slope_count += 1
+        if review.get("road_dist") is not None:
+            dist_tot += review["road_dist"]
+            dist_count += 1
 
-    #now for each id in review_ids, match the associated owner_id from owners_and_reviews to the 
-    #associated review from reviews
-    returnlist = []
-    for x in review_ids:
-        #search owners table for owner name by id
-        this_owner = [b[0] for a,b in enumerate(owners_and_reviews) if b[1] == x]
-        cur = connection.execute(
-            "SELECT first_name, last_name"
-            "FROM Users"
-            "WHERE user_id = this_owner"
-        )
-        owner_name = cur.fetchone() #should just be one anyway
-        this_review = [(b[1],b[2],b[3],b[4],b[5],b[6],b[7]) for a,b in enumerate(reviews) if b[0] == x] #this can't be the right/the easiest way...
-        returnlist.append((owner_name, this_review))
+    # Do division in try except to account for when no reviews are present
+    try:
+        overall_avg = overall_tot / count
+    except:
+        overall_avg = 0
+    try:
+        quality_avg = quality_tot / quality_count
+    except:
+        quality_avg = 0
+    try:
+        slope_avg = slope_tot / slope_count
+    except:
+        slope_avg = 0
+    try:
+        dist_avg = dist_tot / dist_count
+    except:
+        dist_avg = 0
 
     context = {
-        "reviews" : returnlist
+        "overall": overall_avg,
+        "sidewalk_quality": quality_avg,
+        "slope": slope_avg,
+        "road_dist": dist_avg,
+        "reviews": reviews
     }
+
     return flask.make_response(flask.jsonify(**context), 201)
-
-
-
-
-

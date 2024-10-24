@@ -1,4 +1,4 @@
-"""Contains the retrieve_locations API  function."""
+"""Contains the retrieve_locations API function."""
 import flask
 import MDE
 import MDE.model
@@ -36,7 +36,6 @@ def retrieve_locations():
 
     # Take the results of the query and put them into a LIST
     locations = cur.fetchall()
-    print(locations)
 
     # take the results and put them into a context DICT
     context = {
