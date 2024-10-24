@@ -6,7 +6,7 @@ CREATE TABLE Users(
     first_name VARCHAR(20),
     last_name VARCHAR(20),
     email VARCHAR(40) NOT NULL,
-    [filename] VARCHAR(64) NOT NULL DEFAULT "/uploads/default.png",
+    [filename] VARCHAR(64) NOT NULL DEFAULT "default.png",
     [password] VARCHAR(256) NOT NULL
 );
 

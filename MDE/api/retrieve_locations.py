@@ -1,7 +1,6 @@
 """Contains the retrieve_locations API function."""
 import flask
 import MDE
-import MDE.model
 
 
 @MDE.app.route('/api/location/list/', methods=['GET'])

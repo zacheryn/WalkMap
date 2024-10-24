@@ -14,6 +14,7 @@ var first = false
 export default function App() {
     // States
     const [locationsState, setLocationsState] = useState([]);
+    // const [newCenter, setNewCenter] = useState([]);
 
     // The icon for markers
     const customIcon = new Icon({
@@ -115,7 +116,7 @@ export default function App() {
                     {reviewsState.map((review) => {
                         return (
                             <p key={review.review_id}>
-                                <a href={"/users/" + review.username}>
+                                <a href={"/user/" + review.username}>
                                     <b>{review.username}</b>
                                 </a>
                                 {" " + review.content}
@@ -127,7 +128,18 @@ export default function App() {
         );
     }
 
+    // function Search(){
+    //     const [country, setCountry] = useState("");
+    //     const [state, setState] = useState("");
+    //     const [city, setCity] = useState("");
+    //     const [address, setAddress] = useState("");
+    //     const [building, setBuilding] = useState("");
+
+    // }
+
     return (
+        <>
+        {/* <Search /> */}
         <MapContainer
           center={[42.27976830712081, -83.74467699423975]}
           zoom={13}
@@ -147,5 +159,6 @@ export default function App() {
             })}
 
         </MapContainer>
+        </>
     );
 }

@@ -13,7 +13,7 @@ app.config.from_object('MDE.config')
 #
 # EXAMPLE:
 # $ export MDE_SETTINGS=secret_key_config.py
-app.config.from_envvar('MDE_SETTINGS', silent=True)
+# app.config.from_envvar('MDE_SETTINGS', silent=True)
 
 # Tell our app about views and model.  This is dangerously close to a
 # circular import, which is naughty, but Flask was designed that way.

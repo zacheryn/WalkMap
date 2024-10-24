@@ -1,7 +1,8 @@
 """Contains the retrieve_reviews API function."""
-import json
 import flask
 import MDE
+import MDE.config
+
 
 @MDE.app.route('/api/review/list/', methods=['GET'])
 def retrieve_reviews():
@@ -79,6 +80,7 @@ def retrieve_reviews():
     except:
         dist_avg = 0
 
+    print(reviews)
     context = {
         "overall": overall_avg,
         "sidewalk_quality": quality_avg,

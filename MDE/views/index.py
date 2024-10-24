@@ -23,6 +23,7 @@ def show_index():
 
 @MDE.app.route('/user/<username>/')
 def show_user_page(username):
+    """Display a user's personal page."""
 
     connection = MDE.model.get_db()
 
@@ -30,7 +31,7 @@ def show_user_page(username):
         "SELECT * "
         "FROM Users "
         "WHERE username = ?",
-        (username)
+        (username, )
     )
 
     user = cur.fetchone()
@@ -44,7 +45,7 @@ def show_user_page(username):
         "FROM OwnsReview ORV "
         "JOIN Reviews R ON R.review_id = ORV.review_id AND ORV.user_id = ? "
         "ORDER BY R.created DESC",
-        (user['user_id'])
+        (user['user_id'], )
     )
 
     reviews = cur.fetchall()
