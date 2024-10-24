@@ -3,6 +3,7 @@ MDE index view.
 
 URLs include:
 /
+/user/<username>
 """
 import uuid
 import pathlib
@@ -21,30 +22,33 @@ def show_index():
     return flask.render_template("index.html", **context)
 
 @MDE.app.route('/user/<username>/')
-def user_page(username):
+def show_user_page(username):
 
     connection = MDE.model.get_db()
 
     cur = connection.execute(
-        "SELECT user_id, username, first_name, last_name, [filename] "
+        "SELECT * "
         "FROM Users "
-        "WHERE username = ",
+        "WHERE username = ?",
         (username)
     )
 
-    users = cur.fetchall()
-    user_exists = len(users) > 0
-    user_picture = users[0][4]
-    uid = users[0][0]
+    user = cur.fetchone()
+
+    # TODO: redirect user back to login page if they no longer exist
+    user_exists = user is None
 
     # get reviews
-    '''cur = connection.execute(
-        "SELECT user_id, username, first_name, last_name, [filename] "
-        "FROM Users "
-        "WHERE username = ",
-        (username, )
-    )'''
+    cur = connection.execute(
+        "SELECT R.review_id, R.content, R.overall, R.sidewalk_quality, R.slope, R.road_dist, R.sidewalk, R.public_trans, R.created "
+        "FROM OwnsReview ORV "
+        "JOIN Reviews R ON R.review_id = ORV.review_id AND ORV.user_id = ? "
+        "ORDER BY R.created DESC",
+        (user['user_id'])
+    )
 
-    context = {"username": username, "exists":user_exists}
+    reviews = cur.fetchall()
+
+    context = {"user": user, "reviews": reviews, "num_reviews": len(reviews)}
     return flask.render_template("user.html", **context)
 
