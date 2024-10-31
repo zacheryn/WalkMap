@@ -41,11 +41,11 @@ def show_user_page(username):
 
     # get reviews
     cur = connection.execute(
-        "SELECT L.address, R.review_id, R.content, R.overall, R.sidewalk_quality, R.slope, R.road_dist, R.sidewalk, R.public_trans, R.created "
+        "SELECT L.country_name, L.state_name, L.city_name, L.address, L.building_name, R.review_id, R.content, R.overall, R.sidewalk_quality, R.slope, R.road_dist, R.sidewalk, R.public_trans, R.created "
         "FROM OwnsReview ORV "
         "JOIN Reviews R ON R.review_id = ORV.review_id AND ORV.user_id = ? "
-	"JOIN ReviewLocation RL ON RL.review_id = R.review_id"
-	"JOIN Locations L ON L.location_id = RL.location_id"
+        "JOIN ReviewLocation RL ON RL.review_id = R.review_id "
+        "JOIN Locations L ON L.location_id = RL.location_id "
         "ORDER BY R.created DESC",
         (user['user_id'], )
     )

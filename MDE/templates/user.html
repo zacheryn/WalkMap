@@ -4,7 +4,7 @@
     <div class="profile">
         <div class="username"> 
             <h1>{{ user.username }}</h1>
-            <img src="/uploads/{{ user.filename }}" alt="{{ user.username }}'s profile picture.">
+            <img src="/static/images/{{ user.filename }}" alt="{{ user.username }}'s profile picture." >
         </div>
         <div>
             {% if logname == username %}
@@ -26,27 +26,29 @@
         <div class="relationship"> 
             <span> {{ num_reviews }} {{ 'review' if num_reviews == 1 else 'reviews' }} </span>
         </div>
+        <br/>
 
         {% if num_reviews <= 0 %}
             <span>This user has made no reviews.</span>
         {% else %}
             {% for review in reviews %}
 				<div>
-					<div>Review for: {{review.address}}</div>
-					<div>Overall Score: {{review.overall}} </div>
-					<div>Sidewalk Quality: {{review.sidewalk_quality}} </div>
-					<div>Slope: {{review.slope}} </div>
-					<div>Distance From Road: {{review.road_dist}} </div>
-					<div>Sidewalk: {{ 'Yes' if review.sidewalk == True else 'No' }} </div>
-					<div>Public Transportation: {{ 'Yes' if review.public_trans == True else 'No' }} </div>
-					<div>Content: {{ review.content }}
-					<div>Created On: {{ review.created }}</div>
+					<div><b>Review for:</b> {{review.country_name}}, {{review.state_name}}, {{review.city_name}}, {{review.address}}, {{review.building_name}}</div>
+					<div><b>Overall Score:</b> {{review.overall}} </div>
+					<div><b>Sidewalk Quality:</b> {{review.sidewalk_quality}} </div>
+					<div><b>Slope:</b> {{review.slope}} </div>
+					<div><b>Distance From Road:</b> {{review.road_dist}} </div>
+					<div><b>Sidewalk:</b> {{ 'Yes' if review.sidewalk == True else 'No' }} </div>
+					<div><b>Public Transportation:</b> {{ 'Yes' if review.public_trans == True else 'No' }} </div>
+					<div><b>Content:</b> {{ review.content }}
+					<div><b>Created On:</b> {{ review.created }}</div>
 					<form action="/review/delete/{{ review.review_id }}" method="post" enctype="multipart/form-data">
 						<input type="hidden" name="operation" value="delete"/>
 						<input type="hidden" name="reviewid" value="{{ review.review_id }}"/>
 						<input type="submit" name="delete" value="delete this review"/>
 					</form>
                 </div>
+                <br/>
             {% endfor %}
         {% endif %}
     </div>

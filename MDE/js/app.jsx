@@ -108,10 +108,11 @@ export default function App() {
         return (
             <Marker position={[location.location.latitude, location.location.longitude]} icon={customIcon}>
                 <Popup>
-                    <div>Overall: {overallAvgState} / 5.0</div>
-                    <div>Sidewalk Quality: {qualityAvgState} / 5.0</div>
-                    <div>Slope: {slopeAvgState} / 5.0</div>
-                    <div>Distance from Road: {distAvgState} / 5.0</div>
+                    <div><b>{location.location.country_name}, {location.location.state_name}, {location.location.city_name}, {location.location.building_name}</b></div>
+                    <div><b>Overall:</b> {overallAvgState} / 5.0</div>
+                    <div><b>Sidewalk Quality:</b> {qualityAvgState} / 5.0</div>
+                    <div><b>Slope:</b> {slopeAvgState} / 5.0</div>
+                    <div><b>Distance from Road:</b> {distAvgState} / 5.0</div>
                     <br/>
                     {reviewsState.map((review) => {
                         return (
