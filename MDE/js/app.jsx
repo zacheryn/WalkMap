@@ -5,6 +5,7 @@ import utc from "dayjs/plugin/utc";
 import { MapContainer, TileLayer, Marker, useMapEvents, useMap, Popup } from "react-leaflet";
 import { Icon } from "leaflet"
 import { use } from "chai";
+import { func } from "prop-types";
 
 dayjs.extend(relativeTime);
 dayjs.extend(utc);
@@ -105,6 +106,34 @@ export default function App() {
             };
         }, [location])
 
+        function deleteReview(id, index) {
+            useEffect(() => {
+                let ignoreStaleRequest = false;
+                fetch("/api/review/delete/?reviewid=" + id.toString(), {
+                    method: "DELETE",
+                    credentials: "same-origin"
+                })
+                .then((response) => {
+                    if (!response.ok) throw Error(response.statusText);
+                    return response.json();
+                })
+                .then((status) => {
+                    if (!ignoreStaleRequest) {
+                        if (status = 204) {
+                            let nextReviews = reviewsState;
+                            nextReviews.splice(index, 1);
+                            setReviewsState(nextReviews);
+                        }
+                    }
+                })
+                .catch((error) => console.log(error));
+
+                return () => {
+                    ignoreStaleRequest = true;
+                };
+            }, [id])
+        }
+
         return (
             <Marker position={[location.location.latitude, location.location.longitude]} icon={customIcon}>
                 <Popup>
@@ -114,7 +143,23 @@ export default function App() {
                     <div><b>Slope:</b> {slopeAvgState} / 5.0</div>
                     <div><b>Distance from Road:</b> {distAvgState} / 5.0</div>
                     <br/>
-                    {reviewsState.map((review) => {
+                    {reviewsState.map((review, i) => {
+                        if(review.is_owner){
+                            return (
+                                <p key={review.review_id}>
+                                    <a href={"/user/" + review.username}>
+                                        <b>{review.username}</b>
+                                    </a>
+                                    {" " + review.content}
+                                    <button
+                                    onClick={(e) => {
+                                        e.preventDefault();
+                                        deleteReview(review.review_id, i);
+                                    }}
+                                    >delete</button>
+                                </p>
+                            );
+                        }
                         return (
                             <p key={review.review_id}>
                                 <a href={"/user/" + review.username}>

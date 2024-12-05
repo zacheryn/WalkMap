@@ -16,6 +16,9 @@ def retrieve_reviews():
     # Connect to the database
     connection = MDE.model.get_db()
 
+    # Add loging check here
+    logname = str("")
+
     # Return 400 bad request error if location id not provided...not sure how to check if malformed
     if 'locationid' not in flask.request.args:
         return flask.make_response(flask.jsonify(**error_response), 400)
@@ -61,6 +64,10 @@ def retrieve_reviews():
         if review.get("road_dist") is not None:
             dist_tot += review["road_dist"]
             dist_count += 1
+        if review["username"] == logname:
+            review["is_owner"] = True
+        else:
+            review["is_owner"] = False
 
     # Do division in try except to account for when no reviews are present
     try:
