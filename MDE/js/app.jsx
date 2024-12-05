@@ -77,6 +77,7 @@ export default function App() {
         const [qualityAvgState, setQualityAvgState] = useState(0);
         const [slopeAvgState, setSlopeAvgState] = useState(0);
         const [distAvgState, setDistAvgState] = useState(0);
+        const [newReviewState, setNewReviewState] = useState("");
 
         useEffect(() => {
             let ignoreStaleRequest = false;
@@ -134,6 +135,10 @@ export default function App() {
             }, [id])
         }
 
+        function addReview(){
+
+        }
+
         return (
             <Marker position={[location.location.latitude, location.location.longitude]} icon={customIcon}>
                 <Popup>
@@ -169,6 +174,22 @@ export default function App() {
                             </p>
                         );
                     })}
+                    <br/>
+                    <div>
+                        <form onSubmit={addReview}>
+                            <label for="content"><span>Content:</span></label>
+                            <input
+                                type="text"
+                                id="content"
+                                name="content"
+                                value={newReviewState}
+                                placeholder="What do you have to say?"
+                                onChange={(e) => {
+                                    setNewReviewState(e.target.value);
+                                }}
+                            />
+                        </form>
+                    </div>
                 </Popup>
             </Marker>
         );
