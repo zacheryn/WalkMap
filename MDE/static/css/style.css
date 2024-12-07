@@ -16,7 +16,55 @@
     height: 100vh;
 }
 
+/* image default */
 img {
     height: 50px;
     width: 50px;
+}
+
+/* user page pfps*/
+#user_page_pfp {
+    height: 100px;
+    width: 100px;
+}
+
+/* general fonts */
+body {
+    /* this is one of vs code's preset font groups, so feel free to change it if you want to. */
+    font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.review {
+    background-color: #EEEEEE;
+    border-style: solid;
+    border-width: 1px;
+    border-radius: 6px;
+    border-color: gray;
+    padding: 2%;
+    margin: 1%;
+}
+
+#reviews {
+    margin: 1%;
+}
+
+.username{
+    margin: 1%;
+    display: flex;
+    flex-direction: row;
+    column-gap: 3%;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+#change_profile{
+    background-color: #DDDDDD;
+    border: gray solid;
+    border-width: 2px 0px;
+    padding: 3%;
+    line-height: 2em;
+}
+
+.warning{
+    color:red;
 }

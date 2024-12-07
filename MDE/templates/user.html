@@ -3,45 +3,53 @@
 {% block main %}
     <div class="profile">
         <div class="username"> 
-            <h1>{{ user.username }}</h1>
-            <img src="/static/images/{{ user.filename }}" alt="{{ user.username }}'s profile picture." >
+            <img src="/static/images/{{ user.filename }}" alt="{{ user.username }}'s profile picture." id="user_page_pfp">
+            <div id="user_text_info">
+                <h1>{{ user.username }}</h1>
+                <span> {{ num_reviews }} {{ 'review' if num_reviews == 1 else 'reviews' }} </span>
+            </div>
         </div>
         <div>
             {% if logname == username %}
-                <a href="/edit/">
-                    <h4>Edit profile</h4>
-                </a>
-                <form action="/accounts/logout/" method="post" enctype="multipart/form-data">
-                    <input type="submit" name="logout" value="Logout"/>
-                </form>
-                    
-                <h4>Delete account (re-enter password to confirm)</h4>
+                <div id="change_profile">
+                    <h4>Welcome, {{ logname }}!</h4>
+                    <h4><a href="/edit/">
+                        Edit profile
+                    </a><h4>
+                    <form action="/accounts/logout/" method="post" enctype="multipart/form-data">
+                        <input type="submit" name="logout" value="Logout"/>
+                    </form>
+                        
+                    <h4>Delete account <span class="warning">(re-enter password to confirm)</span></h4>
 
-                <form action="javascript:alert('Account deleted.');" method="post" enctype="multipart/form-data">
-                    <input type="text" name="password"/>
-                    <input type="submit" name="logout" value="Delete account"/>
-                </form>
+                    <form action="javascript:alert('Account deleted.');" method="post" enctype="multipart/form-data">
+                        <input type="text" name="password"/>
+                        <input type="submit" name="logout" value="Delete account"/>
+                    </form>
+                </div>
             {% endif %}
         </div>
+        <!-- I think this is better used further up.
         <div class="relationship"> 
             <span> {{ num_reviews }} {{ 'review' if num_reviews == 1 else 'reviews' }} </span>
-        </div>
+        </div>-->
         <br/>
-
+        <div id="reviews">
         {% if num_reviews <= 0 %}
             <span>This user has made no reviews.</span>
         {% else %}
+            
             {% for review in reviews %}
-				<div>
-					<div><b>Review for:</b> {{review.country_name}}, {{review.state_name}}, {{review.city_name}}, {{review.address}}, {{review.building_name}}</div>
-					<div><b>Overall Score:</b> {{review.overall}} </div>
-					<div><b>Sidewalk Quality:</b> {{review.sidewalk_quality}} </div>
-					<div><b>Slope:</b> {{review.slope}} </div>
-					<div><b>Distance From Road:</b> {{review.road_dist}} </div>
-					<div><b>Sidewalk:</b> {{ 'Yes' if review.sidewalk == True else 'No' }} </div>
-					<div><b>Public Transportation:</b> {{ 'Yes' if review.public_trans == True else 'No' }} </div>
-					<div><b>Content:</b> {{ review.content }}
-					<div><b>Created On:</b> {{ review.created }}</div>
+				<div class="review">
+					<div class="review_title"><b>Review for:</b> {{review.country_name}}, {{review.state_name}}, {{review.city_name}}, {{review.address}}, {{review.building_name}}</div>
+					<div class="review_overall"><b>Overall Score:</b> {{review.overall}} </div>
+					<div class="review_sidewalk_quality"><b>Sidewalk Quality:</b> {{review.sidewalk_quality}} </div>
+					<div class="review_slope"><b>Slope:</b> {{review.slope}} </div>
+					<div class="review_road_dist"><b>Distance From Road:</b> {{review.road_dist}} </div>
+					<div class="review_sidewalk"><b>Sidewalk:</b> {{ 'Yes' if review.sidewalk == True else 'No' }} </div>
+					<div class="review_public_trans"><b>Public Transportation:</b> {{ 'Yes' if review.public_trans == True else 'No' }} </div>
+					<div class="review_content"><b>Content:</b> {{ review.content }}</div>
+					<div class="review_created"><b>Created On:</b> {{ review.created }}</div>
 					<form action="/review/delete/{{ review.review_id }}" method="post" enctype="multipart/form-data">
 						<input type="hidden" name="operation" value="delete"/>
 						<input type="hidden" name="reviewid" value="{{ review.review_id }}"/>
@@ -50,7 +58,9 @@
                 </div>
                 <br/>
             {% endfor %}
+        
         {% endif %}
+        </div>
     </div>
 {% endblock %}
 

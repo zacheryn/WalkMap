@@ -36,8 +36,9 @@ def show_user_page(username):
 
     user = cur.fetchone()
 
-    # TODO: redirect user back to login page if they no longer exist
-    user_exists = user is None
+    # redirect user back to login page if they no longer exist
+    if user is None:
+        return flask.redirect('/login/')
 
     # get reviews
     cur = connection.execute(
