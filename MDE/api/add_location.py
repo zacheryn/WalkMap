@@ -10,30 +10,41 @@ def add_location():
     if not is_loggedin():
         flask.abort(403)
     
-    # Check that all needed args are present
-    lat = flask.request.args['lat']
-    long = flask.request.args['long']
-    country = flask.request.args['country']
-    state = flask.request.args['state']
-    city = flask.request.args['city']
-    
-    parameters = [lat, long, country, state, city]
-    
-    if not all(parameters):
-        flask.abort(400)
-    
-    # Connect to the database
-    connection = MDE.model.get_db()
+    # Check for required args
+    if 'lat' not in flask.request.args \
+       or 'long' not in flask.request.args \
+       or 'country' not in flask.request.args \
+       or 'state' not in flask.request.args \
+       or 'city' not in flask.request.args:
+           flask.abort(400)
     
     query = ("INSERT INTO Locations "
              "(latitude, longitude, country_name, state_name, city_name")
     
-    if 'address' in flask.request.args:
-        query += ", address"
-        parameters.append(flask.request.args['address'])
-    if 'building' in flask.request.args:
-        query += ", building"
-        parameters.append(flask.request.args['building'])
+    parameters = [lat, long, country, state, city]
+           
+    # Check that all args are of required format
+    try:
+        lat = float(flask.request.args['lat'])
+        long = float(flask.request.args['long'])
+        country = str(flask.request.args['country'])
+        state = str(flask.request.args['state'])
+        city = str(flask.request.args['city'])
+        
+        if 'address' in flask.request.args:
+            query += ", address"
+            address = str(flask.request.args['address'])
+            parameters.append(address)
+        if 'building' in flask.request.args:
+            query += ", building"
+            building = str(flask.request.args['building'])
+            parameters.append(building)
+    except:
+         # If conversion of any parameters fails, return a 400 Bad Request
+        flask.abort(400)
+    
+    # Connect to the database
+    connection = MDE.model.get_db()
     
     query += ")"
     
@@ -60,9 +71,9 @@ def add_location():
         "city": city
     }
     
-    if address:
+    if 'address' in flask.request.args:
         context['address'] = address
-    if building:
+    if 'building' in flask.request.args:
         context['building'] = building
     
     return flask.make_response(flask.jsonify(**context), 201)
