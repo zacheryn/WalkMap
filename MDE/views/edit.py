@@ -48,16 +48,16 @@ def edit_account(){
         flask.abort(400)
         
     # Handle simple updates first
-    query = "UPDATE Users "
+    query = "UPDATE Users SET"
     parameters = []
     
     connection = MDE.model.get_db()
     
     if firstname:
-        query += "SET first_name = ?, "
+        query += " first_name = ?,"
         parameters.append(firstname)
     if lastname:
-        query += "SET last_name = ?, "
+        query += " last_name = ?,"
         parameters.append(lastname)
     if username:
         # Check that new username does not exists
@@ -73,15 +73,14 @@ def edit_account(){
         if result['count'] > 0:
             flask.abort(409)
         
-        query += "SET username = ?, "
+        query += " username = ?,"
         parameters.append(username)
     if email:
-        query += "SET email = ?, "
+        query += " email = ?,"
         parameters.append(email)
     
-    if query != "UPDATE Users ":
-        cut = len(query) - 2
-        query = query[0:cut]
+    if query != "UPDATE Users SET":
+        query = query[0:len(query) - 1]
         
         query += " WHERE username = ?"
         parameters.append(flask.session['username'])
@@ -91,7 +90,7 @@ def edit_account(){
     
     # Handle new profile picture
     if file:
-        # Get the name of and delete the old file
+        # Get the name of the old file
         cur = connection.execute(
             "SELECT filename "
             "FROM Users "
@@ -100,6 +99,8 @@ def edit_account(){
         )
         query = cur.fetchone()
         old = MDE.app.config["UPLOAD_FOLDER"]/query['filename']
+        
+        # Remove it
         old.unlink()
 
         # Calculate and save the new filename
@@ -109,7 +110,7 @@ def edit_account(){
         path = MDE.app.config["UPLOAD_FOLDER"]/uuid_basename
         file.save(path)
 
-        # Update the filename!
+        # Update the filename
         connection.execute(
             "UPDATE Users "
             "SET filename = ? "
@@ -120,7 +121,7 @@ def edit_account(){
         
     # Handle new password
     if new_password1 and new_password2:
-        # Verify the current password!
+        # Verify the current password
         if not check_password(flask.session['username'], password):
             flask.abort(403)
 
