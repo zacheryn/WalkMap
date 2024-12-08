@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+{% block main %}
+        <div class="username"> 
+            <img src="/static/images/{{ user.filename }}" alt="{{ user.username }}'s profile picture." id="user_page_pfp">
+            <div id="user_text_info">
+                <h1>{{ user.username }}</h1>
+            </div>
+        </div>
+		
+	    <form action="/accounts/edit" method="post" enctype="multipart/form-data">
+			<label for="file-upload">
+				Upload new profile picture:
+			</label>
+			<input type="file" id="file-upload" name="file"/>
+			
+			<label for="firstname">
+				Edit firstname:
+			</label>
+			<input type="text" id="firstname" name="firstname" placeholder="{{ first_name }}"/>
+			
+			<label for="lastname">
+				Edit lastname:
+			</label>
+			<input type="text" id="lastname" name="lastname" placeholder="{{ last_name }}"/>
+			
+			<label for="username">
+				Edit username:
+			</label>
+			<input type="text" id="username" name="username" placeholder="{{ username }}"/>
+			
+			<label for="email">
+				Edit email:
+			</label>
+			<input type="text" id="email" name="email" placeholder="{{ email }}"/>
+			
+			<label for="newpassword1">
+				Set new password:
+			</label>
+			<input type="password" id="newpassword1" name="new_password1"/>
+			
+			<label for="newpassword2">
+				Confirm new password:
+			</label>
+			<input type="password" id="newpassword2" name="new_password2"/>
+			
+			<label for="confirmpassword">
+				Re-enter current password to confirm changes:
+			</label>
+			<input type="password" id="confirmpassword "name="password" required/>
+			
+			<input type="submit" name="update_password" value="submit"/>
+			<input type="hidden" name="operation" value="update_password"/>
+			</form>
+{% endblock %}
