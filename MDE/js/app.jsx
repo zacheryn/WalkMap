@@ -118,10 +118,14 @@ export default function App() {
                 if (!response.ok) throw Error(response.statusText);
                 return response.json();
             })
-            .then((status) => {
-                if (status = 204) {
+            .then((data) => {
+                console.log(data)
+                if (data.status_code == 204) {
+                    console.log("make it in")
+                    console.log(reviewsState)
                     let nextReviews = reviewsState;
                     nextReviews.splice(index, 1);
+                    console.log(nextReviews)
                     setReviewsState(nextReviews);
                 }
             })
@@ -152,9 +156,11 @@ export default function App() {
             })
             .then((data) => {
                 if (data.status_code == undefined) {
+                    console.log(reviewsState)
                     let nextReviews = reviewsState
                     nextReviews.push(data.review)
                     setReviewsState(nextReviews);
+                    console.log(reviewsState)
                     setOverallAvgState(data.overall);
                     setQualityAvgState(data.sidewalk_quality);
                     setSlopeAvgState(data.slope);
@@ -179,16 +185,18 @@ export default function App() {
                     <div><b>Distance from Road:</b> {distAvgState} / 5.0</div>
                     <br/>
                     {reviewsState.map((review, i) => {
+                        console.log("here: ", review)
                         if(review.is_owner){
                             return (
                                 <p key={review.review_id}>
                                     <a href={"/user/" + review.username}>
                                         <b>{review.username}</b>
                                     </a>
-                                    {" " + review.content}
+                                    {" " + review.content + " "}
                                     <button
                                     onClick={(e) => {
                                         e.preventDefault();
+                                        console.log(reviewsState)
                                         deleteReview(review.review_id, i);
                                     }}
                                     >delete</button>

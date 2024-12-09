@@ -89,7 +89,8 @@ def add_review():
         "review": {
             "username": logname,
             "content": data.get("content"),
-            "is_owner": True
+            "is_owner": True,
+            "review_id": reviewid
         },
         "overall": avgs["avg(overall)"],
         "sidewalk_quality": avgs["avg(sidewalk_quality)"],
