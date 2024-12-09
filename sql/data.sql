@@ -8,7 +8,9 @@ INSERT INTO Locations(country_name, state_name, city_name, building_name, longit
 VALUES ('United States', 'Michigan', 'Ann Arbor', NULL, -83.732124, 42.279594),
        ('United States', 'Michigan', 'Ann Arbor', 'University of Michigan - Central Campus', -83.738220, 42.278046),
        ('United States', 'Michigan', 'Ann Arbor', 'University of Michigan - North Campus', -83.71615878050201, 42.29243500051665),
-       ('United States', 'Michigan', 'Ann Arbor', 'Michigan Stadium', -83.74884016750399, 42.26618116426456)
+       ('United States', 'Michigan', 'Ann Arbor', 'Michigan Stadium', -83.74884016750399, 42.26618116426456),
+       ('United States', 'Michigan', 'Ann Arbor', NULL, -83.74052697393104, 42.27081925133863),
+       ('United States', 'Michigan', 'Ann Arbor', NULL, -83.74875102919968, 42.276232870024046);
 
 INSERT INTO Reviews(content, overall, sidewalk_quality, slope, road_dist, sidewalk, public_trans)
 VALUES ('Great city to walk around in!', 4.0, 4, 5, 3, 1, 1),
