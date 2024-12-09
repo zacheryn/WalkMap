@@ -10,7 +10,7 @@
             </div>
         </div>
         <div>
-            {% if logname == username %}
+            {% if logname == user.username %}
                 <div id="change_profile">
                     <h4>Welcome, {{ logname }}!</h4>
                     <h4><a href="/edit/">
@@ -25,6 +25,7 @@
                     <form action="/accounts/delete" method="post" enctype="multipart/form-data">
                         <input type="text" name="password"/>
                         <input type="submit" name="logout" value="Delete account"/>
+                        <input type="hidden" name="logname" value="{{logname}}"/>
                     </form>
                 </div>
             {% endif %}

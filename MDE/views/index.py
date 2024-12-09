@@ -17,8 +17,6 @@ from MDE.views.authorize import is_loggedin
 @MDE.app.route('/')
 def show_index():
     """Display / route.  Initializes React."""
-
-    # For compilation purposes
     logname = is_loggedin()
     context = {"logname": logname}
     return flask.render_template("index.html", **context)
@@ -26,6 +24,7 @@ def show_index():
 @MDE.app.route('/user/<username>/')
 def show_user_page(username):
     """Display a user's personal page."""
+    logname = is_loggedin()
 
     connection = MDE.model.get_db()
 
@@ -55,5 +54,8 @@ def show_user_page(username):
 
     reviews = cur.fetchall()
 
-    context = {"user": user, "reviews": reviews, "num_reviews": len(reviews)}
+    context = {"user": user,
+               "reviews": reviews,
+               "num_reviews": len(reviews),
+               "logname": logname}
     return flask.render_template("user.html", **context)

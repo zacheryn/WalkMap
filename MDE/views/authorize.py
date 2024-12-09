@@ -3,6 +3,7 @@ import hashlib
 import uuid
 import flask
 import MDE
+import MDE.model
 
 def is_loggedin() -> str:
     """Validate that the user has a valid login"""
@@ -16,6 +17,19 @@ def is_loggedin() -> str:
         sc_name = MDE.app.config['SESSION_COOKIE_NAME']
         if sc_name in flask.session:
             logname = flask.session[sc_name]
+
+            # Check to make sure session cookie represents a real user
+            connection = MDE.model.get_db()
+            cur = connection.execute(
+                "SELECT user_id "
+                "FROM Users "
+                "WHERE username = ?",
+                (logname, )
+            )
+            user_id = cur.fetchone()
+            if user_id is None:
+                flask.session.clear()
+                return ""
         else:
             return ""
     else:
