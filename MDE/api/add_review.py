@@ -1,121 +1,100 @@
 """Contains the add_review API function."""
 import flask
 import MDE
+import MDE.model
 from MDE.views.authorize import is_loggedin
 
 @MDE.app.route('/api/review/add/', methods=['POST'])
 def add_review():
     """Adds a review to the database"""
     # Check authorization
-    if not is_loggedin():
+    logname = is_loggedin()
+    if logname == "":
         flask.abort(403)
-    
-    if 'overall' not in flask.request.args:
+
+    # Check for required argument
+    if 'locationid' not in flask.request.args:
         flask.abort(400)
-    
-    parameters = []
-    
-    query = ("INSERT INTO Reviews "
-             "(overall")
-             
-    context = {}
-    
-    # Attempt to extract all parameters as their correct types
-    try:
-        overall = float(flask.request.args['overall'])
-        parameters.append(overall)
-        context['overall'] = overall
-        
-        if 'content' in flask.request.args['content']:
-            content = str(flask.request.args['content'])
-            query += ", content"
-            parameters.append(content)
-            context['content'] = content
-            
-        if 'quality' in flask.request.args['quality']:
-            quality = int(flask.request.args['quality'])
-            query += ", quality"
-            parameters.append(quality)
-            context['quality'] = quality
-        
-        if 'slope' in flask.request.args['slope']:
-            slope = int(flask.request.args['slope'])
-            query += ", slope"
-            parameters.append(slope)
-            context['slope'] = slope
-            
-        if 'dist' in flask.request.args['dist']:
-            dist = int(flask.request.args['dist'])
-            query += ", dist"
-            parameters.append(dist)
-            context['dist'] = dist
-            
-        if 'sidewalk' in flask.request.args['sidewalk']:
-            sidewalk = bool(flask.request.args['sidewalk'])
-            query += ", sidewalk"
-            parameters.append(sidewalk)
-            context['sidewalk'] = sidewalk
-            
-        if 'pubtrans' in flask.request.args['pubtrans']:
-            pubtrans = bool(flask.request.args['pubtrans'])
-            query += ", pubtrans"
-            parameters.append(pubtrans)
-            context['pubtrans'] = pubtrans
-    except:
-        # If string conversion of any parameters fails, return a 400 Bad Request
+
+    # Check for required data in JSON
+    data = flask.request.get_json()
+    if "overall" not in data:
         flask.abort(400)
-    
-    # Connect to the database
+
+    locationid = flask.request.args.get("locationid")
+
     connection = MDE.model.get_db()
-    
-    query += ")"
-    
-    question_marks = "?, " * len(parameters)
-    question_marks = question_marks[0:len(question_marks) - 2]
-    
-    query += f" VALUES ({question_marks})"
-    
-    # Insert the review
-    connection.execute(query, tuple(parameters))
-    connection.commit()
-    
+
+    # Check to ensure location and user exists
     cur = connection.execute(
-        "select last_insert_rowid() "
+        "SELECT location_id "
+        "From Locations "
+        "WHERE location_id = ?",
+        (locationid, )
     )
-    
-    reviewid = cur.fetchone()
-    
-    # Grab its created on date
+    loc = cur.fetchone()["location_id"]
+
     cur = connection.execute(
-        "SELECT created "
-        "FROM Reviews "
-        "WHERE review_id = ?",
-        (reviewid,)
-    )
-    
-    createdon = cur.fetchone()
-    
-    # Grab the logged in user's id
-    cur = connection.execute(
-        "SELECT user_id, username "
+        "SELECT user_id "
         "FROM Users "
         "WHERE username = ?",
-        (flask.session['username'],)
+        (logname, )
     )
-    
-    user = cur.fetchone()
+    userid = cur.fetchone()["user_id"]
+
+    if loc is None or userid is None:
+        flask.abort(404)
+
+    # Add the new review to the database
+    connection.execute(
+        "INSERT INTO Reviews(content, overall, sidewalk_quality, slope, road_dist) "
+        "VALUES (?, ?, ?, ?, ?)",
+        (data.get("content"), data.get("overall"), data.get("quality"), data.get("slope"), data.get("dist"))
+    )
+
+    cur = connection.execute(
+        "SELECT last_insert_rowid()",
+        tuple()
+    )
+    reviewid = cur.fetchone()["last_insert_rowid()"]
     
     # Create mapping between user and their review
-    cur = connection.execute(
+    connection.execute(
         "INSERT INTO OwnsReview "
         "(user_id, review_id) "
         "VALUES(?, ?)",
-        (userid, reviewid, )
+        (userid, reviewid)
     )
-    
-    context['reviewid'] = reviewid
-    context['userid'] = user['user_id']
-    context['username'] = user['username']
-    context['created'] = createdon['created']
-    
+
+    # Create mapping between location and the review
+    connection.execute(
+        "INSERT INTO ReviewLocation(location_id, review_id) "
+        "VALUES (?, ?)",
+        (locationid, reviewid)
+    )
+
+    # Get the updated averages
+    cur = connection.execute(
+        "SELECT avg(overall), avg(sidewalk_quality), avg(slope), avg(road_dist) "
+        "FROM Reviews R "
+        "JOIN ReviewLocation RL "
+        "ON R.review_id = RL.review_id "
+        "WHERE RL.Location_id = ?",
+        (locationid, )
+    )
+    avgs = cur.fetchone()
+
+    # Create the context
+    context = {
+        "review": {
+            "username": logname,
+            "content": data.get("content"),
+            "is_owner": True
+        },
+        "overall": avgs["overall"],
+        "sidewalk_quality": avgs["sidewalk_quality"],
+        "slope": avgs["slope"],
+        "road_dist": avgs["road_dist"]
+    }
+
     return flask.make_response(flask.jsonify(**context), 201)

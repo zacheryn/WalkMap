@@ -55,4 +55,3 @@ def show_user_page(username):
 
     context = {"user": user, "reviews": reviews, "num_reviews": len(reviews)}
     return flask.render_template("user.html", **context)
-

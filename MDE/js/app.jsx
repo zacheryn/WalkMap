@@ -4,6 +4,9 @@ import relativeTime from "dayjs/plugin/relativeTime";
 import utc from "dayjs/plugin/utc";
 import { MapContainer, TileLayer, Marker, useMapEvents, useMap, Popup } from "react-leaflet";
 import { Icon } from "leaflet"
+import { OpenStreetMapProvider, GeoSearchControl } from 'leaflet-geosearch'
+import { FaStar } from "react-icons/fa";
+import { Container, Radio, Rating } from "./RatingStyles";
 import { use } from "chai";
 import { func } from "prop-types";
 
@@ -77,7 +80,7 @@ export default function App() {
         const [qualityAvgState, setQualityAvgState] = useState(0);
         const [slopeAvgState, setSlopeAvgState] = useState(0);
         const [distAvgState, setDistAvgState] = useState(0);
-        const [newReviewState, setNewReviewState] = useState("");
+        const [newReviewState, setNewReviewState] = useState({quality: 0, slope: 0, dist: 0, content: ""});
 
         useEffect(() => {
             let ignoreStaleRequest = false;
@@ -135,13 +138,46 @@ export default function App() {
             }, [id])
         }
 
-        function addReview(){
+        // Form for the user to add a review
+        function addReview(e){
+            e.preventDefault()
+            const overall = (newReviewState.quality + newReviewState.slope + newReviewState.dist) / 3
+            fetch("/api/review/add/?locationid=" + location.location.location_id.toString(), {
+                method: "POST",
+                headers: { 'Content-Type': 'application/json' },
+                credentials: "same-origin",
+                body: JSON.stringify({
+                    content: newReviewState.content,
+                    overall: overall.toPrecision(3),
+                    quality: newReviewState.quality,
+                    slope: newReviewState.slope,
+                    dist: newReviewState.dist
+                })
+            })
+            .then((response) => {
+                if (!response.ok) throw Error(response.statusText);
+                return response.json();
+            })
+            .then((data) => {
+                if (data.status_code == undefined) {
+                    setReviewsState(...reviewsState, data.review);
+                    setOverallAvgState(data.overall);
+                    setQualityAvgState(data.sidewalk_quality);
+                    setSlopeAvgState(data.slope);
+                    setDistAvgState(data.road_dist);
+                    setNewReviewState({quality: 0, slope: 0, dist: 0, content: ""});
+                }
+            })
+            .catch((error) => console.log(error));
 
+            return () => {
+                ignoreStaleRequest = true;
+            };
         }
 
         return (
             <Marker position={[location.location.latitude, location.location.longitude]} icon={customIcon}>
-                <Popup>
+                <Popup maxHeight="200px">
                     <div><b>{location.location.country_name}, {location.location.state_name}, {location.location.city_name}, {location.location.building_name}</b></div>
                     <div><b>Overall:</b> {overallAvgState} / 5.0</div>
                     <div><b>Sidewalk Quality:</b> {qualityAvgState} / 5.0</div>
@@ -177,17 +213,72 @@ export default function App() {
                     <br/>
                     <div>
                         <form onSubmit={addReview}>
-                            <label for="content"><span>Content:</span></label>
-                            <input
-                                type="text"
-                                id="content"
-                                name="content"
-                                value={newReviewState}
-                                placeholder="What do you have to say?"
-                                onChange={(e) => {
-                                    setNewReviewState(e.target.value);
-                                }}
-                            />
+                            <div>
+                                <label><span>Quality:</span></label>
+                                {[...Array(5)].map((_, i) => {
+                                    return (
+                                        <input
+                                            type="radio"
+                                            key={i}
+                                            name="quality"
+                                            value={i + 1}
+                                            onClick={(e) => {
+                                                setNewReviewState({...newReviewState, ["quality"]: Number(e.target.value)});
+                                            }}
+                                        />
+                                    );
+                                })}
+                            </div>
+                            <div>
+                                <label><span>Slope:</span></label>
+                                {[...Array(5)].map((_, i) => {
+                                    return (
+                                        <input
+                                            type="radio"
+                                            key={i}
+                                            name="slope"
+                                            value={i + 1}
+                                            onClick={(e) => {
+                                                setNewReviewState({...newReviewState, ["slope"]: Number(e.target.value)});
+                                            }}
+                                        />
+                                    );
+                                })}
+                            </div>
+                            <div>
+                                <label><span>Distance from road:</span></label>
+                                {[...Array(5)].map((_, i) => {
+                                    return (
+                                        <input
+                                            type="radio"
+                                            key={i}
+                                            name="dist"
+                                            value={i + 1}
+                                            onClick={(e) => {
+                                                setNewReviewState({...newReviewState, ["dist"]: Number(e.target.value)});
+                                            }}
+                                        />
+                                    );
+                                })}
+                            </div>
+                            <div>
+                                <label><span>Content:</span></label>
+                                <input
+                                    type="text"
+                                    id="content"
+                                    name="content"
+                                    value={newReviewState.content}
+                                    placeholder="What do you have to say?"
+                                    onKeyDown={(e) => { e.key === 'Enter' && e.preventDefault(); }}
+                                    onChange={(e) => {
+                                        e.preventDefault()
+                                        setNewReviewState({...newReviewState, ["content"]: e.target.value});
+                                    }}
+                                />
+                            </div>
+                            <div>
+                                <input type="submit" value="Submit"/>
+                            </div>
                         </form>
                     </div>
                 </Popup>
@@ -204,6 +295,23 @@ export default function App() {
 
     // }
 
+    // make new leaflet element
+    const Search = (props) => {
+        const map = useMap() // access to leaflet map
+        const { provider } = props
+
+        useEffect(() => {
+            const searchControl = new GeoSearchControl({
+                provider,
+            })
+
+            map.addControl(searchControl) // this is how you add a control in vanilla leaflet
+            return () => map.removeControl(searchControl)
+        }, [props])
+
+        return null // don't want anything to show up from this comp
+    }
+
     return (
         <>
         {/* <Search /> */}
@@ -219,12 +327,13 @@ export default function App() {
                 url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
             />
 
+            <Search provider={new OpenStreetMapProvider()} />
+
             {locationsState.map((location) => {
                 return (
                     <LocationMarker key={location.location_id} location={location} />
                 );
             })}
-
         </MapContainer>
         </>
     );

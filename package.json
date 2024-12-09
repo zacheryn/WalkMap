@@ -39,13 +39,18 @@
     "webpack-cli": ">=5.1.4"
   },
   "dependencies": {
+    "@coreui/coreui": "^5.2.0",
+    "@coreui/react": "^5.4.1",
     "dayjs": "^1.11.10",
     "leaflet": "^1.9.4",
+    "leaflet-geosearch": "^4.0.0",
     "prop-types": ">=15.8.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-icons": "^5.4.0",
     "react-infinite-scroll-component": ">=6.1.0",
     "react-leaflet": "^4.2.1",
+    "styled-components": "^6.1.13",
     "ts-loader": ">=9.4.4",
     "typescript": ">=5.2.2"
   },

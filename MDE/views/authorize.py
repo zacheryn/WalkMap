@@ -4,26 +4,35 @@ import uuid
 import flask
 import MDE
 
-def is_loggedin():
+def is_loggedin() -> str:
     """Validate that the user has a valid login"""
-    
-    username = flask.request.authorization['username']
-    password = flask.request.authorization['password']
-    
-    if 'username' not in flask.session or 'password' not in flask.session:
-            return False
-    
-    authorized = validate_credentials(username, password)
-    
-    if not authorized:
-        return False
-    
-    return True
+    logname = ""
 
-def validate_credentials(username, password):
+    # Check if authorization header is used
+    if flask.request.authorization is None \
+       or "username" not in flask.request.authorization \
+       or "password" not in flask.request.authorization:
+        # Look for a session cookie
+        sc_name = MDE.app.config['SESSION_COOKIE_NAME']
+        if sc_name in flask.session:
+            logname = flask.session[sc_name]
+        else:
+            return ""
+    else:
+        logname = flask.request.authorization['username']
+        password = flask.request.authorization['password']
+    
+        authorized = validate_credentials(logname, password)
+    
+        if not authorized:
+            return ""
+    
+    return logname
+
+def validate_credentials(username, password) -> bool:
     """Validate username and password."""
     # Connect to the database and get the salt and correct hash
-    connection = insta485.model.get_db()
+    connection = MDE.model.get_db()
     cur = connection.execute(
         "SELECT password "
         "FROM Users "

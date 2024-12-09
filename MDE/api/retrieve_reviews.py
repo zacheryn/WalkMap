@@ -2,6 +2,7 @@
 import flask
 import MDE
 import MDE.config
+from MDE.views.authorize import is_loggedin
 
 
 @MDE.app.route('/api/review/list/', methods=['GET'])
@@ -17,7 +18,7 @@ def retrieve_reviews():
     connection = MDE.model.get_db()
 
     # Add loging check here
-    logname = str("")
+    logname = is_loggedin()
 
     # Return 400 bad request error if location id not provided...not sure how to check if malformed
     if 'locationid' not in flask.request.args:
