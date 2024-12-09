@@ -51,11 +51,13 @@
 					<div class="review_public_trans"><b>Public Transportation:</b> {{ 'Yes' if review.public_trans == True else 'No' }} </div>
 					<div class="review_content"><b>Content:</b> {{ review.content }}</div>
 					<div class="review_created"><b>Created On:</b> {{ review.created }}</div>
+                    {% if logname == user.username %}
 					<form action="/review/delete/{{ review.review_id }}" method="post" enctype="multipart/form-data">
 						<input type="hidden" name="operation" value="delete"/>
 						<input type="hidden" name="reviewid" value="{{ review.review_id }}"/>
 						<input type="submit" name="delete" value="delete this review"/>
 					</form>
+                    {% endif %}
                 </div>
                 <br/>
             {% endfor %}
