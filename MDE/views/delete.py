@@ -17,7 +17,7 @@ def delete_account():
         "DELETE FROM Reviews "
         "WHERE user_id IN "
         "(SELECT user_id FROM Users WHERE username = ?)",
-        (flask.session['username],)
+        (flask.session['username'],)
     )
     
     connection.commit()
@@ -26,7 +26,7 @@ def delete_account():
     cur = connection.execute(
         "DELETE FROM Users "
         "WHERE username = ? ",
-        (flask.session['username],)
+        (flask.session['username'],)
     )
     
     connection.commit()

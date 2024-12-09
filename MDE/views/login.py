@@ -4,7 +4,7 @@ Handles user login.
 import uuid
 import pathlib
 import flask
-import insta485
+import MDE
 from MDE.views.authorize import validate_credentials
 
 @MDE.app.route('/login/')
@@ -19,21 +19,21 @@ def show_login():
         "login.html", {}
     )
 
-@insta485.app.route('/accounts/login', methods=['POST'])
+@MDE.app.route('/accounts/login', methods=['POST'])
 def login_user():
     """Login in user and redirect them to index."""
-     username = flask.request.form.get('username')
-     password = flask.request.form.get('password')
+    username = flask.request.form.get('username')
+    password = flask.request.form.get('password')
      
-     if not username or not password:
-        flask.abort(400)
+    if not username or not password:
+       flask.abort(400)
 
      # Check the login info combo
-     if not validate_credentials(username, password):
-        flask.abort(403)
+    if not validate_credentials(username, password):
+       flask.abort(403)
 
      # If we're all good, set the session cookie
-     flask.session['username'] = username
+    flask.session['username'] = username
 
      # Redirect to index
-     return flask.redirect(flask.url_for(show_index))
+    return flask.redirect(flask.url_for('show_index'))

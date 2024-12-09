@@ -15,7 +15,7 @@ def show_create():
     )
 
 @MDE.app.route('/accounts/create/', methods=['POST'])
-def create_account(){
+def create_account():
     """Create a new user account."""
     # Start by getting and checking input
     firstname = flask.request.form.get('firstname')
@@ -74,4 +74,3 @@ def create_account(){
     
     # Redirect to index
     return flask.redirect(flask.url_for('show_index'))
-}

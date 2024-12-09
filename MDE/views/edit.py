@@ -28,7 +28,7 @@ def show_edit():
     )
 
 @MDE.app.route('/accounts/edit/', methods=['POST'])
-def edit_account(){
+def edit_account():
     """Create a new user account."""
     # Check if the user is logged in
     if 'username' not in flask.session:
@@ -85,7 +85,7 @@ def edit_account(){
         query += " WHERE username = ?"
         parameters.append(flask.session['username'])
         
-        connection.execute(query, tuple(parameters])
+        connection.execute(query, tuple(parameters))
         connection.commit()
     
     # Handle new profile picture
@@ -149,4 +149,3 @@ def edit_account(){
     
     # Redirect back to edit so user can see new changes
     return flask.redirect(flask.url_for(show_edit))
-}
