@@ -6,7 +6,6 @@ import { MapContainer, TileLayer, Marker, useMapEvents, useMap, Popup } from "re
 import { Icon } from "leaflet"
 import { OpenStreetMapProvider, GeoSearchControl } from 'leaflet-geosearch'
 import { FaStar } from "react-icons/fa";
-import { Container, Radio, Rating } from "./RatingStyles";
 import { use } from "chai";
 import { func } from "prop-types";
 

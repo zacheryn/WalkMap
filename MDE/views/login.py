@@ -5,19 +5,22 @@ import uuid
 import pathlib
 import flask
 import MDE
-from MDE.views.authorize import validate_credentials
+import MDE.config
+from MDE.views.authorize import is_loggedin, validate_credentials
 
 @MDE.app.route('/login/')
 def show_login():
     """Display /login/ route."""
     # Redirect to / if the user is logged in
-    if 'username' in flask.session:
+    logname = is_loggedin()
+    if logname != "":
         return flask.redirect(flask.url_for('show_index'))
 
+    context = {"logname": logname}
+
     # Otherwise, render the static login page
-    return flask.render_template(
-        "login.html", {}
-    )
+    return flask.render_template("login.html", **context)
+
 
 @MDE.app.route('/accounts/login', methods=['POST'])
 def login_user():
@@ -28,12 +31,21 @@ def login_user():
     if not username or not password:
        flask.abort(400)
 
-     # Check the login info combo
+    # Check the login info combo
     if not validate_credentials(username, password):
        flask.abort(403)
 
-     # If we're all good, set the session cookie
-    flask.session['username'] = username
+    # If we're all good, set the session cookie
+    sc_name = MDE.config.SESSION_COOKIE_NAME
+    flask.session[sc_name] = username
 
      # Redirect to index
+    return flask.redirect(flask.url_for('show_index'))
+
+
+@MDE.app.route('/accounts/logout/', methods=['POST'])
+def logout_user():
+    """Remove session cookie and redirects to '/'"""
+    flask.session.clear()
+
     return flask.redirect(flask.url_for('show_index'))

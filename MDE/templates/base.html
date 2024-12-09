@@ -15,7 +15,11 @@
                 <a href="/">Logo</a>
             </div>
             <div class="top-right" style="float:right">
-                <a href="/users/{{ logname }}/">{{ logname }}</a>
+                {% if logname == "" %}
+                    <a href="/login/">Sign In</a>
+                {% else %}
+                    <a href="/user/{{ logname }}/">{{ logname }}</a>
+                {% endif %}
             </div>
         </div>
     </header>

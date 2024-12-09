@@ -11,6 +11,7 @@ import hashlib
 import flask
 import arrow
 import MDE
+from MDE.views.authorize import is_loggedin
 
 
 @MDE.app.route('/')
@@ -18,7 +19,8 @@ def show_index():
     """Display / route.  Initializes React."""
 
     # For compilation purposes
-    context = {}
+    logname = is_loggedin()
+    context = {"logname": logname}
     return flask.render_template("index.html", **context)
 
 @MDE.app.route('/user/<username>/')
