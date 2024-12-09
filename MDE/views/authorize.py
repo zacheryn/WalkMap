@@ -55,6 +55,7 @@ def validate_credentials(username, password) -> bool:
     )
     result = cur.fetchone()
     if result is None:
+        print("result")
         return False
     algorithm, salt, correct_hash = result['password'].split('$')
 
@@ -64,5 +65,7 @@ def validate_credentials(username, password) -> bool:
     hash_obj.update(password_salted.encode('utf-8'))
     attempt_hash = hash_obj.hexdigest()
 
+    print(attempt_hash)
+    print(correct_hash)
     # Check that the password is correct
     return attempt_hash == correct_hash

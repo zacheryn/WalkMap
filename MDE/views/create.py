@@ -56,11 +56,12 @@ def create_account():
 
     # Hash the password
     hash_obj = hashlib.new('sha512')
-    password_salted = uuid.uuid4().hex + password
+    salt = uuid.uuid4().hex
+    password_salted = salt + password
     hash_obj.update(password_salted.encode('utf-8'))
     password_db_string = "$".join([
         'sha512',
-        uuid.uuid4().hex,
+        salt,
         hash_obj.hexdigest()
     ])
     
