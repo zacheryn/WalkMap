@@ -91,10 +91,10 @@ def add_review():
             "content": data.get("content"),
             "is_owner": True
         },
-        "overall": avgs["overall"],
-        "sidewalk_quality": avgs["sidewalk_quality"],
-        "slope": avgs["slope"],
-        "road_dist": avgs["road_dist"]
+        "overall": avgs["avg(overall)"],
+        "sidewalk_quality": avgs["avg(sidewalk_quality)"],
+        "slope": avgs["avg(slope)"],
+        "road_dist": avgs["avg(road_dist)"]
     }
 
     return flask.make_response(flask.jsonify(**context), 201)

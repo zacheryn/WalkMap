@@ -110,31 +110,24 @@ export default function App() {
         }, [location])
 
         function deleteReview(id, index) {
-            useEffect(() => {
-                let ignoreStaleRequest = false;
-                fetch("/api/review/delete/?reviewid=" + id.toString(), {
-                    method: "DELETE",
-                    credentials: "same-origin"
-                })
-                .then((response) => {
-                    if (!response.ok) throw Error(response.statusText);
-                    return response.json();
-                })
-                .then((status) => {
-                    if (!ignoreStaleRequest) {
-                        if (status = 204) {
-                            let nextReviews = reviewsState;
-                            nextReviews.splice(index, 1);
-                            setReviewsState(nextReviews);
-                        }
-                    }
-                })
-                .catch((error) => console.log(error));
+            fetch("/api/review/delete/?reviewid=" + id.toString(), {
+                method: "DELETE",
+                credentials: "same-origin"
+            })
+            .then((response) => {
+                if (!response.ok) throw Error(response.statusText);
+                return response.json();
+            })
+            .then((status) => {
+                if (status = 204) {
+                    let nextReviews = reviewsState;
+                    nextReviews.splice(index, 1);
+                    setReviewsState(nextReviews);
+                }
+            })
+            .catch((error) => console.log(error));
 
-                return () => {
-                    ignoreStaleRequest = true;
-                };
-            }, [id])
+            return
         }
 
         // Form for the user to add a review
@@ -159,7 +152,9 @@ export default function App() {
             })
             .then((data) => {
                 if (data.status_code == undefined) {
-                    setReviewsState(...reviewsState, data.review);
+                    let nextReviews = reviewsState
+                    nextReviews.push(data.review)
+                    setReviewsState(nextReviews);
                     setOverallAvgState(data.overall);
                     setQualityAvgState(data.sidewalk_quality);
                     setSlopeAvgState(data.slope);
