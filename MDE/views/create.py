@@ -1,18 +1,23 @@
 """Handles account creation."""
 import flask
 import MDE
+import pathlib
+import uuid
+import hashlib
+import MDE.config
+from MDE.views.authorize import is_loggedin
 
 @MDE.app.route('/create/')
 def show_create():
     """Display /create/ route."""
     # Redirect to /accounts/edit/ if the user is logged in
-    if 'username' in flask.session:
+    logname = is_loggedin()
+    if logname != "":
         return flask.redirect(flask.url_for('show_edit'))
 
     # Render the account creation page
-    return flask.render_template(
-        "create.html", {}
-    )
+    context = {"logname": logname}
+    return flask.render_template("create.html", **context)
 
 @MDE.app.route('/accounts/create/', methods=['POST'])
 def create_account():
@@ -22,11 +27,10 @@ def create_account():
     lastname = flask.request.form.get('lastname')
     username = flask.request.form.get('username')
     password = flask.request.form.get('password')
-    fullname = flask.request.form.get('fullname')
     email = flask.request.form.get('email')
     file = flask.request.files['file']
 
-    if not all([firstname, lastname, username, password, fullname, email, file.filename]):
+    if not all([firstname, lastname, username, password, email]):
         flask.abort(400)
 
     # Check if the user already exists
@@ -44,10 +48,11 @@ def create_account():
         flask.abort(409)
 
     # Save the profile picture file
-    suffix = pathlib.Path(file.filename).suffix.lower()
-    uuid_basename = f"{uuid.uuid4().hex}{suffix}"
-    path = MDE.app.config["UPLOAD_FOLDER"]/uuid_basename
-    file.save(path)
+    if file is not None:
+        suffix = pathlib.Path(file.filename).suffix.lower()
+        uuid_basename = f"{uuid.uuid4().hex}{suffix}"
+        path = MDE.app.config["UPLOAD_FOLDER"]/uuid_basename
+        file.save(path)
 
     # Hash the password
     hash_obj = hashlib.new('sha512')
@@ -60,17 +65,26 @@ def create_account():
     ])
     
     # Create the account
-    connection.execute(
-        "INSERT INTO Users "
-        "(username, first_name, last_name, email, filename, password) "
-        "VALUES "
-        "(?, ?, ?, ?, ?, ?)",
-        (username, firstname, lastname, email, uuid_basename, password_db_string)
-    )
+    if file is None:
+        connection.execute(
+            "INSERT INTO Users "
+            "(username, first_name, last_name, email, password) "
+            "VALUES "
+            "(?, ?, ?, ?, ?)",
+            (username, firstname, lastname, email, password_db_string)
+        )
+    else:
+        connection.execute(
+            "INSERT INTO Users "
+            "(username, first_name, last_name, email, filename, password) "
+            "VALUES "
+            "(?, ?, ?, ?, ?, ?)",
+            (username, firstname, lastname, email, uuid_basename, password_db_string)
+        )
     connection.commit()
     
     # Set cookie
-    flask.session['username'] = username
+    flask.session[MDE.config.SESSION_COOKIE_NAME] = username
     
     # Redirect to index
     return flask.redirect(flask.url_for('show_index'))
