@@ -19,7 +19,16 @@ VALUES ('Great city to walk around in!', 4.0, 4, 5, 3, 1, 1),
        ('The campus was quite welcoming', 5.0, 5, 5, 5, 1, 1),
        ('The campus was nice.', 5.0, 5, 5, 5, 1, 1),
        ('North campus is a little hilly.', 3.67, 5, 2, 4, 1, 1),
-       ('North campus was quite enjoyable.', 4.33, 5, 3, 5, 1, 1);
+       ('North campus was quite enjoyable.', 4.33, 5, 3, 5, 1, 1),
+       ('Gotta love the BIG House!', 5.0, 5, 5, 5, 1, 1),
+       ('Go Blue!', 5.0, 5, 5, 5, 1, 1),
+       ('Sidewalk is closed', 3.0, 0, 2, 4, 1, 1),
+       ('Not bad, but there is currently a sidewalk closure', 4.0, 5, 3, 4, 1, 1),
+
+       ('A little hilly, but not bad', 4.0, 5, 3, 4, 1, 1),
+       ('Hills...', 3.67, 5, 1, 5, 1, 1),
+       ('Solid', 4.0, 5, 4, 3, 1, 1),
+       ('I like to walk around here.', 4.33, 4, 5, 4, 1, 1);
 
 INSERT INTO OwnsReview(user_id, review_id)
 VALUES (1, 1),
@@ -27,7 +36,15 @@ VALUES (1, 1),
        (1, 3),
        (2, 4),
        (1, 5),
-       (2, 6);
+       (2, 6),
+       (1, 7),
+       (2, 8),
+       (1, 9),
+       (2, 10),
+       (1, 11),
+       (2, 12),
+       (1, 13),
+       (2, 14);
 
 INSERT INTO ReviewLocation(location_id, review_id)
 VALUES (1, 1),
@@ -35,4 +52,12 @@ VALUES (1, 1),
        (2, 3),
        (2, 4),
        (3, 5),
-       (3, 6);
+       (3, 6),
+       (4, 7),
+       (4, 8),
+       (5, 9),
+       (5, 10),
+       (6, 11),
+       (6, 12),
+       (7, 13),
+       (7, 14);
