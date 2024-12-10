@@ -45,7 +45,7 @@ def create_account():
     
     result = cur.fetchone()
     if result['count'] > 0:
-        flask.abort(409)
+        return flask.render_template("error.html")
 
     # Save the profile picture file
     if file is not None:

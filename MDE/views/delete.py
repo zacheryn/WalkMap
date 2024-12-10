@@ -2,7 +2,7 @@
 import flask
 import MDE
 import MDE.model
-from MDE.views.authorize import is_loggedin
+from MDE.views.authorize import is_loggedin, validate_credentials
 
 @MDE.app.route('/accounts/delete/', methods=['POST'])
 def delete_account():
@@ -13,6 +13,11 @@ def delete_account():
         print("Death")
         print(f"{logname}, {flask.request.form}")
         flask.abort(403)
+
+    if "password" not in flask.request.form:
+        flask.abort(403)
+
+    validate_credentials(logname, flask.request.form["password"])
 
     connection = MDE.model.get_db()
 

@@ -23,7 +23,7 @@
                     <h4>Delete account <span class="warning">(re-enter password to confirm)</span></h4>
 
                     <form action="/accounts/delete" method="post" enctype="multipart/form-data">
-                        <input type="password" name="password"/>
+                        <input type="password" name="password" required/>
                         <input type="submit" name="logout" value="Delete account"/>
                         <input type="hidden" name="logname" value="{{logname}}"/>
                     </form>
@@ -66,9 +66,3 @@
         </div>
     </div>
 {% endblock %}
-
-
-
-
-        
-
